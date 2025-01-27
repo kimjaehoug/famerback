@@ -77,10 +77,9 @@ exports.deleteReview = async (req, res) => {
 // 특정 회사의 리뷰 가져오기
 exports.getReviewsByCompany = async (req, res) => {
   try {
-    const reviews = await Review.find({ review: req.params.reviewId }).populate(
-      "author",
-      "email"
-    );
+    const reviews = await Review.find({
+      company: req.params.companyId,
+    }).populate("author", "email");
     console.log(
       `Fetched ${reviews.length} reviews for company ID: ${req.params.companyId}`
     );

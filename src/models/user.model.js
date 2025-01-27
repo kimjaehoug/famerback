@@ -11,6 +11,10 @@ const userSchema = mongoose.Schema({
     minLength: 8,
     required: true,
   },
+  skillSet: {
+    type: [String],
+    required: true,
+  },
   resumes: [
     {
       type: mongoose.Schema.Types.ObjectId,

@@ -11,11 +11,11 @@ exports.createJobPost = async (req, res) => {
       content,
       author,
     });
-    console.log(`JobPost created: ${post.title}`);
-    res.status(201).json(post);
+    console.log(`JobPost created: ${jobPost.title}`);
+    res.status(201).json(jobPost);
   } catch (error) {
-    console.error("Error creating post:", error.message);
-    res.status(400).json({ error: "Failed to create job post" });
+    console.error("Error creating jobPost:", error.message);
+    res.status(400).json({ error: "Failed to create jobPost" });
   }
 };
 
@@ -68,6 +68,22 @@ exports.updateJobPost = async (req, res) => {
   } catch (error) {
     console.error("Error updating job post:", error.message);
     res.status(400).json({ error: "Failed to update job post" });
+  }
+};
+
+// 회사별 잡 포스팅
+exports.getJobPostsByCompany = async (req, res) => {
+  try {
+    const jobPosts = await JobPost.find({
+      author: req.params.companyId,
+    }).populate("author", "email");
+    console.log(
+      `Fetched ${jobPosts.length} job posts for company ID: ${req.params.companyId}`
+    );
+    res.status(200).json(jobPosts);
+  } catch (error) {
+    console.error("Error fetching jobPosts by company:", error.message); // 에러 메시지 출력
+    res.status(500).json({ error: "Failed to fetch jobPosts by company" });
   }
 };
 

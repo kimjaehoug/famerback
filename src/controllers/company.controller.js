@@ -1,15 +1,15 @@
-const User = require("../models/user.model");
+const Company = require("../models/company.model");
 const passport = require("passport"); // 패스포트
 const jwt = require("jsonwebtoken");
 
 // 회원가입 (User 생성)
 exports.signup = async (req, res) => {
   req.body.token = "";
-  const user = new User(req.body);
+  const company = new Company(req.body);
 
   try {
-    await user.save();
-    res.status(200).json({ success: true, user });
+    await company.save();
+    res.status(200).json({ success: true, company });
   } catch (err) {
     console.error(err);
     res
@@ -19,45 +19,29 @@ exports.signup = async (req, res) => {
 };
 
 // 모든 유저 조회
-exports.getAllUsers = async (req, res) => {
+exports.getAllCompanies = async (req, res) => {
   try {
-    const users = await User.find();
-    res.status(200).json(users);
+    const companies = await Company.find();
+    res.status(200).json(companies);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to fetch users", details: err });
+    res.status(500).json({ error: "Failed to fetch companies", details: err });
   }
 };
 
 // useId로 유저 조회
-exports.getUserById = async (req, res) => {
-  const { userId } = req.params;
+exports.getCompanyById = async (req, res) => {
+  const { companyId } = req.params;
 
   try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
+    const company = await Company.findById(companyId);
+    if (!company) {
+      return res.status(404).json({ error: "Company not found" });
     }
-    res.status(200).json(user);
+    res.status(200).json(company);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to fetch user", details: err });
-  }
-};
-
-// SkillSet으로 유저 조회
-exports.getUserBySkillSet = async (req, res) => {
-  try {
-    const users = await User.find({
-      skillSet: req.params.skillSet,
-    }).populate("author", "email");
-    console.log(
-      `Fetched ${users.length} users for skillSet: ${req.params.skillSet}`
-    );
-    res.status(200).json(users);
-  } catch (error) {
-    console.error("Error fetching users by skillSet:", error.message); // 에러 메시지 출력
-    res.status(500).json({ error: "Failed to fetch users by skillSet" });
+    res.status(500).json({ error: "Failed to fetch company", details: err });
   }
 };
 
