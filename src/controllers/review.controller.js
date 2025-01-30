@@ -89,19 +89,3 @@ exports.getReviewsByCompany = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch reviews by company" });
   }
 };
-
-// 특정 게시물의 리뷰 개수 조회
-// exports.getCommentCountByPost = async (req, res) => {
-//   try {
-//     const commentCount = await Comment.countDocuments({
-//       post: req.params.postId,
-//     });
-//     console.log(
-//       `Comment count for post ID ${req.params.postId}: ${commentCount}`
-//     ); // 댓글 개수 출력
-//     res.status(200).json({ postId: req.params.postId, commentCount });
-//   } catch (error) {
-//     console.error("Error fetching comment count:", error.message); // 에러 메시지 출력
-//     res.status(500).json({ error: "Failed to fetch comment count" });
-//   }
-// };

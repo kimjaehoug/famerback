@@ -4,42 +4,13 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const mongoose = require("mongoose");
-const passport = require("passport"); // 패스포트
-const cookieSession = require("cookie-session");
 const companyRoutes = require("./routes/company.routes"); // 기업 유저 라우트
 const jobPostRoutes = require("./routes/jobPost.routes"); // 채용 공고 라우트
 const resumeRoutes = require("./routes/resume.routes"); // 이력서 라우트
 const reviewRoutes = require("./routes/review.routes"); // 리뷰 라우트
 const userRoutes = require("./routes/user.routes"); // 유저 라우트
 const app = express();
-const cookieEncryptionKey = "aaaa";
 require("dotenv").config();
-
-app.use(
-  cookieSession({
-    name: "cookie-session-name",
-    keys: [cookieEncryptionKey],
-  })
-);
-
-// register regenerate & save after the cookieSession middleware initialization
-app.use(function (request, response, next) {
-  if (request.session && !request.session.regenerate) {
-    request.session.regenerate = (cb) => {
-      cb();
-    };
-  }
-  if (request.session && !request.session.save) {
-    request.session.save = (cb) => {
-      cb();
-    };
-  }
-  next();
-});
-
-app.use(passport.initialize());
-app.use(passport.session());
-require("./config/passport");
 
 const allowedOrigins = ["http://localhost:3000", "https://ojakgyo.vercel.app"]; // 허용할 출처
 
@@ -91,7 +62,7 @@ app.get("/", (req, res) => {
 
 app.use("/company", companyRoutes); // 기업 회원 라우트 추가
 app.use("/jobPost", jobPostRoutes); // 채용 공고 라우트 추가
-app.use("/resume", userRoutes); // 이력서 라우트 추가
+app.use("/resume", resumeRoutes); // 이력서 라우트 추가
 app.use("/review", reviewRoutes); // 리뷰 라우트 추가
 app.use("/user", userRoutes); // 유저 라우트 추가
 

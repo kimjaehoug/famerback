@@ -1,15 +1,28 @@
 const Company = require("../models/company.model");
-const passport = require("passport"); // 패스포트
 const jwt = require("jsonwebtoken");
 
 // 회원가입 (User 생성)
 exports.signup = async (req, res) => {
   req.body.token = "";
-  const company = new Company(req.body);
+  const { id, password } = req.body;
+
+  const company = await Company.findOne({ id });
+
+  if (company) {
+    return res
+      .status(400)
+      .json({ success: false, error: "Email already exists" });
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  req.body.password = hashedPassword;
+
+  const newCompany = new Company(req.body);
 
   try {
-    await company.save();
-    res.status(200).json({ success: true, company });
+    await newCompany.save();
+    res.status(200).json({ success: true, newCompany });
   } catch (err) {
     console.error(err);
     res
@@ -64,47 +77,19 @@ exports.getCompanyByName = async (req, res) => {
 
 // 로그인
 exports.login = async (req, res, next) => {
-  passport.authenticate("local", async (err, user, info) => {
-    if (err) {
-      return next(err);
-    }
+  const { id, password } = req.body;
+  const company = await Company.findOne({ id });
 
-    if (!user) {
-      return res.status(400).json({ msg: info });
-    }
+  if (!company) {
+    return res.status(401).json({ message: "ID doesn't exist." });
+  }
 
-    req.logIn(user, async (err) => {
-      if (err) {
-        return next(err);
-      }
+  const isPasswordValid = await bcrypt.compare(password, user.password);
 
-      const accessToken = jwt.sign(
-        {
-          email: user.email,
-        },
-        process.env.JWT_KEY,
-        { expiresIn: "15s", issuer: "weather", subject: "user_info" }
-      );
+  if (!isPasswordValid) {
+    return res.status(401).json({ message: "Invalid password." });
+  }
 
-      const refreshToken = jwt.sign({}, process.env.JWT_KEY, {
-        expiresIn: "1d",
-        issuer: "weather",
-        subject: "user_info",
-      });
-
-      // user.token = refreshToken;
-      // user.save();
-
-      // res.cookie("refreshToken", refreshToken, {
-      //   httpOnly: true,
-      //   maxAge: 24 * 60 * 60 * 1000,
-      // });
-
-      return res.status(200).json({
-        success: true,
-        user: { _id: user._id, email: user.email },
-        accessToken,
-      });
-    });
-  })(req, res, next);
+  const token = jwt.sign({ id: company._id }, process.env.JWT_KEY);
+  res.json({ token, company });
 };

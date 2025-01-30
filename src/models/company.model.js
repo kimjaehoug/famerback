@@ -15,6 +15,11 @@ const companySchema = mongoose.Schema({
     unique: true,
     required: true,
   },
+  id: {
+    type: String,
+    unique: true,
+    required: true,
+  },
   password: {
     type: String,
     minLength: 8,
@@ -30,15 +35,6 @@ const companySchema = mongoose.Schema({
     type: String,
   },
 });
-
-companySchema.methods.comparePassword = function (plainPassword, cb) {
-  if (plainPassword === this.password) {
-    cb(null, true);
-  } else {
-    cb(null, false);
-  }
-  return cb({ error: "error" });
-};
 
 const Company = mongoose.model("Company", companySchema);
 

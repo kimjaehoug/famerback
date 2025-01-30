@@ -15,6 +15,11 @@ const userSchema = mongoose.Schema({
     unique: true,
     required: true,
   },
+  id: {
+    type: String,
+    unique: true,
+    required: true,
+  },
   password: {
     type: String,
     minLength: 8,
@@ -40,15 +45,6 @@ const userSchema = mongoose.Schema({
     type: String,
   },
 });
-
-userSchema.methods.comparePassword = function (plainPassword, cb) {
-  if (plainPassword === this.password) {
-    cb(null, true);
-  } else {
-    cb(null, false);
-  }
-  return cb({ error: "error" });
-};
 
 const User = mongoose.model("User", userSchema);
 

@@ -1,25 +1,36 @@
-const User = require("../models/user.model");
-const passport = require("passport"); // 패스포트
-const jwt = require("jsonwebtoken");
+import User from "../models/user.model";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 // 회원가입 (User 생성)
-exports.signup = async (req, res) => {
-  req.body.token = "";
-  const user = new User(req.body);
+export async function signup(req, res) {
+  const { id, password } = req.body;
+
+  const user = await User.findOne({ id });
+
+  if (user) {
+    return res.status(400).json({ success: false, error: "ID already exists" });
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  req.body.password = hashedPassword;
+
+  const newUser = new User(req.body);
 
   try {
-    await user.save();
-    res.status(200).json({ success: true, user });
+    await newUser.save();
+    res.status(200).json({ success: true, newUser });
   } catch (err) {
     console.error(err);
     res
       .status(400)
       .json({ success: false, error: "Signup failed", details: err });
   }
-};
+}
 
 // 모든 유저 조회
-exports.getAllUsers = async (req, res) => {
+export async function getAllUsers(req, res) {
   try {
     const users = await User.find();
     res.status(200).json(users);
@@ -27,10 +38,10 @@ exports.getAllUsers = async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch users", details: err });
   }
-};
+}
 
 // useId로 유저 조회
-exports.getUserById = async (req, res) => {
+export async function getUserById(req, res) {
   const { userId } = req.params;
 
   try {
@@ -43,10 +54,10 @@ exports.getUserById = async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch user", details: err });
   }
-};
+}
 
 // SkillSet으로 유저 조회
-exports.getUserBySkillSet = async (req, res) => {
+export async function getUserBySkillSet(req, res) {
   try {
     const users = await User.find({
       skillSet: req.params.skillSet,
@@ -59,51 +70,23 @@ exports.getUserBySkillSet = async (req, res) => {
     console.error("Error fetching users by skillSet:", error.message); // 에러 메시지 출력
     res.status(500).json({ error: "Failed to fetch users by skillSet" });
   }
-};
+}
 
 // 로그인
-exports.login = async (req, res, next) => {
-  passport.authenticate("local", async (err, user, info) => {
-    if (err) {
-      return next(err);
-    }
+export async function login(req, res, next) {
+  const { id, password } = req.body;
+  const user = await User.findOne({ id });
 
-    if (!user) {
-      return res.status(400).json({ msg: info });
-    }
+  if (!user) {
+    return res.status(401).json({ message: "User doesn't exist." });
+  }
 
-    req.logIn(user, async (err) => {
-      if (err) {
-        return next(err);
-      }
+  const isPasswordValid = await bcrypt.compare(password, user.password);
 
-      const accessToken = jwt.sign(
-        {
-          email: user.email,
-        },
-        process.env.JWT_KEY,
-        { expiresIn: "15s", issuer: "weather", subject: "user_info" }
-      );
+  if (!isPasswordValid) {
+    return res.status(401).json({ message: "Invalid password." });
+  }
 
-      const refreshToken = jwt.sign({}, process.env.JWT_KEY, {
-        expiresIn: "1d",
-        issuer: "weather",
-        subject: "user_info",
-      });
-
-      // user.token = refreshToken;
-      // user.save();
-
-      // res.cookie("refreshToken", refreshToken, {
-      //   httpOnly: true,
-      //   maxAge: 24 * 60 * 60 * 1000,
-      // });
-
-      return res.status(200).json({
-        success: true,
-        user: { _id: user._id, email: user.email },
-        accessToken,
-      });
-    });
-  })(req, res, next);
-};
+  const token = jwt.sign({ id: user._id }, process.env.JWT_KEY);
+  res.json({ token, user });
+}
