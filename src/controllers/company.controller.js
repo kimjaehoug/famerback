@@ -1,5 +1,6 @@
 const Company = require("../models/company.model");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 // 회원가입 (User 생성)
 exports.signup = async (req, res) => {

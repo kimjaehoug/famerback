@@ -1,9 +1,9 @@
-import User from "../models/user.model";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+const User = require("../models/user.model");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 // 회원가입 (User 생성)
-export async function signup(req, res) {
+exports.signup = async (req, res) => {
   const { id, password } = req.body;
 
   const user = await User.findOne({ id });
@@ -27,10 +27,10 @@ export async function signup(req, res) {
       .status(400)
       .json({ success: false, error: "Signup failed", details: err });
   }
-}
+};
 
 // 모든 유저 조회
-export async function getAllUsers(req, res) {
+exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
     res.status(200).json(users);
@@ -38,10 +38,10 @@ export async function getAllUsers(req, res) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch users", details: err });
   }
-}
+};
 
 // useId로 유저 조회
-export async function getUserById(req, res) {
+exports.getUserById = async (req, res) => {
   const { userId } = req.params;
 
   try {
@@ -54,10 +54,10 @@ export async function getUserById(req, res) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch user", details: err });
   }
-}
+};
 
 // SkillSet으로 유저 조회
-export async function getUserBySkillSet(req, res) {
+exports.getUserBySkillSet = async (req, res) => {
   try {
     const users = await User.find({
       skillSet: req.params.skillSet,
@@ -70,10 +70,10 @@ export async function getUserBySkillSet(req, res) {
     console.error("Error fetching users by skillSet:", error.message); // 에러 메시지 출력
     res.status(500).json({ error: "Failed to fetch users by skillSet" });
   }
-}
+};
 
 // 로그인
-export async function login(req, res, next) {
+exports.login = async (req, res, next) => {
   const { id, password } = req.body;
   const user = await User.findOne({ id });
 
@@ -89,4 +89,4 @@ export async function login(req, res, next) {
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_KEY);
   res.json({ token, user });
-}
+};
