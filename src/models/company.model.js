@@ -1,6 +1,15 @@
 const mongoose = require("mongoose");
 
 const companySchema = mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  dateOfFoundation: {
+    type: String,
+    required: true,
+    format: /^\d{4}\/\d{2}\/\d{2}$/,
+  },
   email: {
     type: String,
     unique: true,

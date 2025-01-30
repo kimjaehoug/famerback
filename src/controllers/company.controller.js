@@ -45,6 +45,23 @@ exports.getCompanyById = async (req, res) => {
   }
 };
 
+exports.getCompanyByName = async (req, res) => {
+  const { companyName } = req.params;
+
+  try {
+    const company = await Company.find({
+      name: companyName,
+    });
+    if (!company) {
+      return res.status(404).json({ error: "Company not found" });
+    }
+    res.status(200).json(company);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch company", details: err });
+  }
+};
+
 // 로그인
 exports.login = async (req, res, next) => {
   passport.authenticate("local", async (err, user, info) => {
