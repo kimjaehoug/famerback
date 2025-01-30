@@ -42,7 +42,7 @@ exports.updateReview = async (req, res) => {
   try {
     const { stars, content } = req.body;
     const review = await Review.findByIdAndUpdate(
-      req.params.commentId,
+      req.params.reviewId,
       { stars, content },
       { new: true }
     );

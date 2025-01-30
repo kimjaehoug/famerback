@@ -1,6 +1,6 @@
 const Resume = require("../models/resume.model");
 
-// 게시글 생성
+// 이력서 생성
 exports.createResume = async (req, res) => {
   try {
     const { title, content, author } = req.body;
@@ -17,7 +17,7 @@ exports.createResume = async (req, res) => {
   }
 };
 
-// 특정 게시글 조회
+// 특정 이력서 조회
 exports.getResumeById = async (req, res) => {
   try {
     const resume = await Resume.findById(req.params.id).populate(

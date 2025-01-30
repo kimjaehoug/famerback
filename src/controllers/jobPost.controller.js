@@ -87,6 +87,22 @@ exports.getJobPostsByCompany = async (req, res) => {
   }
 };
 
+// SkillSet으로 잡포스트 조회
+exports.getJobPostsBySkillSet = async (req, res) => {
+  try {
+    const jobPosts = await JobPost.find({
+      skillSet: req.params.skillSet,
+    }).populate("author", "email");
+    console.log(
+      `Fetched ${jobPosts.length} jobPosts for skillSet: ${req.params.skillSet}`
+    );
+    res.status(200).json(jobPosts);
+  } catch (error) {
+    console.error("Error fetching jobPosts by skillSet:", error.message); // 에러 메시지 출력
+    res.status(500).json({ error: "Failed to fetch jobPosts by skillSet" });
+  }
+};
+
 // 게시글 삭제
 exports.deleteJobPost = async (req, res) => {
   try {

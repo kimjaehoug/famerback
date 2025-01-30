@@ -6,10 +6,11 @@ const path = require("path");
 const mongoose = require("mongoose");
 const passport = require("passport"); // 패스포트
 const cookieSession = require("cookie-session");
-const mapRoutes = require("./routes/map.routes");
+const companyRoutes = require("./routes/company.routes"); // 기업 유저 라우트
+const jobPostRoutes = require("./routes/jobPost.routes"); // 채용 공고 라우트
+const resumeRoutes = require("./routes/resume.routes"); // 이력서 라우트
+const reviewRoutes = require("./routes/review.routes"); // 리뷰 라우트
 const userRoutes = require("./routes/user.routes"); // 유저 라우트
-const postRoutes = require("./routes/post.routes"); // 게시글 라우트
-const commentRoutes = require("./routes/comment.routes"); // 댓글 라우트
 const app = express();
 const cookieEncryptionKey = "aaaa";
 require("dotenv").config();
@@ -88,22 +89,11 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to the API!" });
 });
 
-app.use("/users", userRoutes); // 유저 라우트 추가
-app.use("/posts", postRoutes); // 게시글 라우트 추가
-// Map 관련 라우트 연결
-app.use("/bikemap", mapRoutes);
-app.use("/comments", commentRoutes); // 댓글 라우트 추가
-
-// 게시글 불러오기
-app.get("/board", async (req, res) => {
-  const db = (await connectDB).db("test");
-  let result = await db
-    .collection("comment")
-    .find({ postId: req.query.id })
-    .sort({ createdAt: -1 })
-    .toArray();
-  res.status(200).json(result);
-});
+app.use("/company", companyRoutes); // 기업 회원 라우트 추가
+app.use("/jobPost", jobPostRoutes); // 채용 공고 라우트 추가
+app.use("/resume", userRoutes); // 이력서 라우트 추가
+app.use("/review", reviewRoutes); // 리뷰 라우트 추가
+app.use("/user", userRoutes); // 유저 라우트 추가
 
 // 404 에러 처리
 app.use((req, res, next) => {
