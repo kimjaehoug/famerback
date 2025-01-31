@@ -10,9 +10,7 @@ exports.signup = async (req, res) => {
   const company = await Company.findOne({ id });
 
   if (company) {
-    return res
-      .status(400)
-      .json({ success: false, error: "Email already exists" });
+    return res.status(400).json({ success: false, error: "ID already exists" });
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -85,7 +83,7 @@ exports.login = async (req, res, next) => {
     return res.status(401).json({ message: "ID doesn't exist." });
   }
 
-  const isPasswordValid = await bcrypt.compare(password, user.password);
+  const isPasswordValid = await bcrypt.compare(password, company.password);
 
   if (!isPasswordValid) {
     return res.status(401).json({ message: "Invalid password." });

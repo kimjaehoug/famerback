@@ -15,6 +15,9 @@ const companySchema = mongoose.Schema({
     unique: true,
     required: true,
   },
+  introduction: {
+    type: String,
+  },
   id: {
     type: String,
     unique: true,

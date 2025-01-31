@@ -72,6 +72,26 @@ exports.getUserBySkillSet = async (req, res) => {
   }
 };
 
+exports.updateUser = async (req, res) => {
+  try {
+    const { name, skillSet, id, email, dateOfBirth } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.params.userId,
+      { name, skillSet, id, email, dateOfBirth },
+      { new: true }
+    );
+    if (!user) {
+      console.log(`User not found with ID: ${req.params.userId}`);
+      return res.status(404).json({ error: "User not found" });
+    }
+    console.log(`Updated user: ${user._id}`);
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error updating user:", error.message);
+    res.status(400).json({ error: "Failed to update user" });
+  }
+};
+
 // 로그인
 exports.login = async (req, res, next) => {
   const { id, password } = req.body;
@@ -89,4 +109,20 @@ exports.login = async (req, res, next) => {
 
   const token = jwt.sign({ id: user._id }, process.env.JWT_KEY);
   res.json({ token, user });
+};
+
+// 유저 삭제
+exports.deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.userId);
+    if (!user) {
+      console.log(`User not found with ID: ${req.params.userId}`);
+      return res.status(404).json({ error: "User not found" });
+    }
+    console.log(`Deleted user with ID: ${user._id}`); // 삭제된 댓글 ID 출력
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting user:", error.message); // 에러 메시지 출력
+    res.status(500).json({ error: "Failed to delete user" });
+  }
 };

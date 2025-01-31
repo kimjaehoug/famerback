@@ -29,6 +29,9 @@ const userSchema = mongoose.Schema({
     type: [String],
     required: true,
   },
+  introduction: {
+    type: String,
+  },
   resumes: [
     {
       type: mongoose.Schema.Types.ObjectId,

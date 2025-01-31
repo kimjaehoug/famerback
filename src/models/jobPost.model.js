@@ -17,7 +17,7 @@ const jobPostSchema = mongoose.Schema(
     },
     author: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Company",
       required: true,
     },
     applicants: [
