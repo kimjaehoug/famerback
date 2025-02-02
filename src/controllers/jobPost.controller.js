@@ -22,7 +22,7 @@ exports.createJobPost = async (req, res) => {
 // 모든 게시글 조회
 exports.getAllJobPosts = async (req, res) => {
   try {
-    const jobPosts = await JobPost.find().populate("author", "email");
+    const jobPosts = await JobPost.find().populate("author", "id");
     console.log(`Fetched ${jobPosts.length} job posts`);
     res.status(200).json(jobPosts);
   } catch (error) {
@@ -76,7 +76,7 @@ exports.getJobPostsByCompany = async (req, res) => {
   try {
     const jobPosts = await JobPost.find({
       author: req.params.companyId,
-    }).populate("author", "email");
+    }).populate("author", "id");
     console.log(
       `Fetched ${jobPosts.length} job posts for company ID: ${req.params.companyId}`
     );
@@ -92,7 +92,7 @@ exports.getJobPostsBySkillSet = async (req, res) => {
   try {
     const jobPosts = await JobPost.find({
       skillSet: req.params.skillSet,
-    }).populate("author", "email");
+    }).populate("author", "id");
     console.log(
       `Fetched ${jobPosts.length} jobPosts for skillSet: ${req.params.skillSet}`
     );
@@ -116,5 +116,27 @@ exports.deleteJobPost = async (req, res) => {
   } catch (error) {
     console.error("Error deleting job post:", error.message);
     res.status(500).json({ error: "Failed to delete job post" });
+  }
+};
+
+// 회사에 지원
+exports.applyToJobPost = async (req, res) => {
+  try {
+    const { application } = req.body;
+
+    const jobPost = await JobPost.findByIdAndUpdate(
+      req.params.id,
+      { $push: { applicants: applicant } },
+      { new: true }
+    );
+    if (!jobPost) {
+      console.log(`Job post not found with ID: ${req.params.id}`);
+      return res.status(404).json({ error: "Job post not found" });
+    }
+    console.log(`Updated job post: ${jobPost.title}`);
+    res.status(200).json(jobPost);
+  } catch (error) {
+    console.error("Error applying to job post:", error.message);
+    res.status(500).json({ error: "Failed to apply to job post" });
   }
 };

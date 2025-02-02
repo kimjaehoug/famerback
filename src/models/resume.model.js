@@ -10,6 +10,36 @@ const resumeSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  motivation: {
+    type: String,
+    required: true,
+  },
+  projects: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Activity",
+  },
+  activities: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Activity",
+  },
+  resumes: {
+    type: [Buffer],
+  },
+  portfolios: {
+    type: [String],
+  },
+  awards: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Activity",
+  },
+  certificates: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Activity",
+  },
+  skillSet: {
+    type: [String],
+    required: true,
+  },
   content: {
     type: String,
     required: true,

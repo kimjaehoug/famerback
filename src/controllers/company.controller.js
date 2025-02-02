@@ -74,6 +74,27 @@ exports.getCompanyByName = async (req, res) => {
   }
 };
 
+exports.updateCompany = async (req, res) => {
+  try {
+    const { name, id, email, dateOfFoundation, introduction, jobPosts } =
+      req.body;
+    const company = await Company.findByIdAndUpdate(
+      req.params.companyId,
+      { name, id, email, dateOfFoundation, introduction, jobPosts },
+      { new: true }
+    );
+    if (!company) {
+      console.log(`Company not found with ID: ${req.params.companyId}`);
+      return res.status(404).json({ error: "Company not found" });
+    }
+    console.log(`Updated company: ${company._id}`);
+    res.status(200).json(company);
+  } catch (error) {
+    console.error("Error updating company:", error.message);
+    res.status(400).json({ error: "Failed to update company" });
+  }
+};
+
 // 로그인
 exports.login = async (req, res, next) => {
   const { id, password } = req.body;
@@ -91,4 +112,20 @@ exports.login = async (req, res, next) => {
 
   const token = jwt.sign({ id: company._id }, process.env.JWT_KEY);
   res.json({ token, company });
+};
+
+// 유저 삭제
+exports.deleteCompany = async (req, res) => {
+  try {
+    const company = await Company.findByIdAndDelete(req.params.companyId);
+    if (!company) {
+      console.log(`Company not found with ID: ${req.params.companyId}`);
+      return res.status(404).json({ error: "Company not found" });
+    }
+    console.log(`Deleted company with ID: ${company._id}`); // 삭제된 댓글 ID 출력
+    res.status(200).json({ message: "Company deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting company:", error.message); // 에러 메시지 출력
+    res.status(500).json({ error: "Failed to delete company" });
+  }
 };

@@ -61,7 +61,7 @@ exports.getResumesByUser = async (req, res) => {
   try {
     const resumes = await Resume.find({
       author: req.params.authorId,
-    }).populate("author", "email");
+    }).populate("author", "id");
     console.log(
       `Fetched ${resumes.length} resumes for author ID: ${req.params.resumeId}`
     );

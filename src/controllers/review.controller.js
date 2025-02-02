@@ -79,7 +79,7 @@ exports.getReviewsByCompany = async (req, res) => {
   try {
     const reviews = await Review.find({
       company: req.params.companyId,
-    }).populate("author", "email");
+    }).populate("author", "id");
     console.log(
       `Fetched ${reviews.length} reviews for company ID: ${req.params.companyId}`
     );

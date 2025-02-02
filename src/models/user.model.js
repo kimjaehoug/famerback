@@ -5,11 +5,65 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  skillSet: {
+    type: [String],
+  },
   dateOfBirth: {
     type: String,
     required: true,
     format: /^\d{4}\/\d{2}\/\d{2}$/,
   },
+  address: {
+    type: String,
+  },
+  phoneNumber: {
+    type: String,
+    required: true,
+    format: /^\d{3}-\d{4}-\d{4}$/,
+  },
+  degrees: [
+    {
+      type: {
+        type: String,
+        required: true,
+      },
+      institution: {
+        type: String,
+        required: true,
+      },
+      major: {
+        type: String,
+        required: true,
+      },
+      GPA: {
+        type: String,
+        required: true,
+      },
+      gradStatus: {
+        type: String,
+        required: true,
+      },
+      gradYearMonth: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  foreignLanguages: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      period: {
+        type: String,
+        required: true,
+      },
+      score: {
+        type: String,
+      },
+    },
+  ],
   email: {
     type: String,
     unique: true,
@@ -25,19 +79,9 @@ const userSchema = mongoose.Schema({
     minLength: 8,
     required: true,
   },
-  skillSet: {
-    type: [String],
-    required: true,
-  },
   introduction: {
     type: String,
   },
-  resumes: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Resume",
-    },
-  ],
   appliedJobs: [
     {
       type: mongoose.Schema.Types.ObjectId,

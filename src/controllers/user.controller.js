@@ -74,11 +74,12 @@ exports.getUserBySkillSet = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const { name, skillSet, id, email, dateOfBirth } = req.body;
     const user = await User.findByIdAndUpdate(
       req.params.userId,
-      { name, skillSet, id, email, dateOfBirth },
-      { new: true }
+      { ...req.body },
+      {
+        new: true,
+      }
     );
     if (!user) {
       console.log(`User not found with ID: ${req.params.userId}`);
