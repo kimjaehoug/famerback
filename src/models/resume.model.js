@@ -14,36 +14,108 @@ const resumeSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  projects: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Activity",
-  },
-  activities: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Activity",
-  },
-  resumes: {
+  jobExperience: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      period: {
+        type: String,
+        required: true,
+      },
+      details: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  projects: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      period: {
+        type: String,
+        required: true,
+      },
+      details: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  activities: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      period: {
+        type: String,
+        required: true,
+      },
+      details: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  portfolioLinks: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      period: {
+        type: String,
+        required: true,
+      },
+      details: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  portfolioFiles: {
     type: [Buffer],
   },
-  portfolios: {
-    type: [String],
+  additionalFiles: {
+    type: [Buffer],
   },
-  awards: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Activity",
-  },
-  certificates: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Activity",
-  },
-  skillSet: {
-    type: [String],
-    required: true,
-  },
-  content: {
-    type: String,
-    required: true,
-  },
+  awards: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      period: {
+        type: String,
+        required: true,
+      },
+      details: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  certificates: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      period: {
+        type: String,
+        required: true,
+      },
+      details: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
 });
 
 const Resume = mongoose.model("Resume", resumeSchema);

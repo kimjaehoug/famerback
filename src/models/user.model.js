@@ -61,6 +61,7 @@ const userSchema = mongoose.Schema({
       },
       score: {
         type: String,
+        required: true,
       },
     },
   ],

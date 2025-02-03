@@ -3,17 +3,12 @@ const Resume = require("../models/resume.model");
 // 이력서 생성
 exports.createResume = async (req, res) => {
   try {
-    const { title, content, author } = req.body;
-    const resume = await Resume.create({
-      title,
-      content,
-      author,
-    });
+    const resume = await Resume.create(req.body);
     console.log(`Resume created: ${resume.title}`);
     res.status(201).json(resume);
   } catch (error) {
     console.error("Error creating resume:", error.message);
-    res.status(400).json({ error: "Failed to create resume" });
+    res.status(400).json({ error: error.message });
   }
 };
 
@@ -22,7 +17,7 @@ exports.getResumeById = async (req, res) => {
   try {
     const resume = await Resume.findById(req.params.id).populate(
       "author",
-      "email"
+      "id"
     );
     if (!resume) {
       console.log(`Resume not found with ID: ${req.params.id}`);
@@ -39,12 +34,9 @@ exports.getResumeById = async (req, res) => {
 // 게시글 수정
 exports.updateResume = async (req, res) => {
   try {
-    const { title, content } = req.body;
-    const resume = await Resume.findByIdAndUpdate(
-      req.params.id,
-      { title, content },
-      { new: true }
-    );
+    const resume = await Resume.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
     if (!resume) {
       console.log(`Resume not found with ID: ${req.params.id}`);
       return res.status(404).json({ error: "Resume not found" });
