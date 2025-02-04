@@ -20,10 +20,10 @@ const jobPostSchema = mongoose.Schema(
       ref: "Company",
       required: true,
     },
-    applicants: [
+    applications: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "Resume",
       },
     ],
     skillSets: [

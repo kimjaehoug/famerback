@@ -1,4 +1,6 @@
 const JobPost = require("../models/jobPost.model");
+const Resume = require("../models/resume.model");
+const User = require("../models/user.model");
 
 // 게시글 생성
 exports.createJobPost = async (req, res) => {
@@ -122,11 +124,11 @@ exports.deleteJobPost = async (req, res) => {
 // 회사에 지원
 exports.applyToJobPost = async (req, res) => {
   try {
-    const { application } = req.body;
+    const resume = await Resume.findById(req.body);
 
     const jobPost = await JobPost.findByIdAndUpdate(
       req.params.id,
-      { $push: { applicants: applicant } },
+      { $push: { applications: resume } },
       { new: true }
     );
     if (!jobPost) {

@@ -5,6 +5,7 @@ const jobPostController = require("../controllers/jobPost.controller");
 
 // 게시글 CRUD 라우트
 router.post("/", jobPostController.createJobPost); // 게시글 생성
+router.post("/apply/:id", jobPostController.applyToJobPost); // 게시글 생성
 router.get("/", jobPostController.getAllJobPosts); // 모든 게시글 조회
 router.get("/:id", jobPostController.getJobPostById); // 특정 게시글 조회
 router.get("/company/:companyId", jobPostController.getJobPostsByCompany); // 특정 게시글 조회
