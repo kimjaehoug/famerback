@@ -33,12 +33,32 @@ exports.getAllJobPosts = async (req, res) => {
   }
 };
 
+exports.getAppliedJobsByUserId = async (req, res) => {
+  try {
+    const applications = (await User.findById(req.params.userId)).applications;
+
+    const appliedJobs = [];
+
+    for (const application of applications) {
+      const jobPost = await JobPost.findById(application.jobPost);
+      appliedJobs.push({ jobPost, resume: application.resume });
+    }
+
+    res.status(200).json(appliedJobs);
+  } catch (error) {
+    console.error("Error fetching applied job posts by userId:", error.message);
+    res
+      .status(500)
+      .json({ error: "Failed to fetch applied job posts by userId" });
+  }
+};
+
 // 특정 게시글 조회
 exports.getJobPostById = async (req, res) => {
   try {
     const jobPost = await JobPost.findById(req.params.id).populate(
       "author",
-      "email"
+      "id"
     );
     if (!jobPost) {
       console.log(`Job post not found with ID: ${req.params.id}`);
@@ -124,17 +144,61 @@ exports.deleteJobPost = async (req, res) => {
 // 회사에 지원
 exports.applyToJobPost = async (req, res) => {
   try {
-    const resume = await Resume.findById(req.body);
-
     const jobPost = await JobPost.findByIdAndUpdate(
       req.params.id,
-      { $push: { applications: resume } },
+      { $push: { applications: req.body.resumeId } },
       { new: true }
     );
+
     if (!jobPost) {
       console.log(`Job post not found with ID: ${req.params.id}`);
       return res.status(404).json({ error: "Job post not found" });
     }
+
+    await User.findByIdAndUpdate(
+      req.body.userId,
+      {
+        $push: {
+          applications: { jobPost: jobPost._id, resume: req.body.resumeId },
+        },
+      },
+      { new: true }
+    );
+
+    console.log(`Updated job post: ${jobPost.title}`);
+    res.status(200).json(jobPost);
+  } catch (error) {
+    console.error("Error applying to job post:", error.message);
+    res.status(500).json({ error: "Failed to apply to job post" });
+  }
+};
+
+exports.cancelApplication = async (req, res) => {
+  try {
+    const jobPost = await JobPost.findByIdAndUpdate(
+      req.params.id,
+      { $pull: { applications: req.body.resumeId } },
+      { safe: true, upsert: true }
+    );
+
+    if (!jobPost) {
+      console.log(`Job post not found with ID: ${req.params.id}`);
+      return res.status(404).json({ error: "Job post not found" });
+    }
+
+    await User.findByIdAndUpdate(
+      req.body.userId,
+      {
+        $pull: {
+          applications: {
+            jobPost: jobPost.id,
+            resume: req.body.resumeId,
+          },
+        },
+      },
+      { safe: true, upsert: true }
+    );
+
     console.log(`Updated job post: ${jobPost.title}`);
     res.status(200).json(jobPost);
   } catch (error) {

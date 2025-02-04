@@ -83,10 +83,16 @@ const userSchema = mongoose.Schema({
   introduction: {
     type: String,
   },
-  appliedJobs: [
+  applications: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "JobPost",
+      jobPost: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "JobPost",
+      },
+      resume: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Resume",
+      },
     },
   ],
   token: {
