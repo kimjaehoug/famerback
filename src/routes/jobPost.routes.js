@@ -10,6 +10,7 @@ router.put("/apply/:id", jobPostController.cancelApplication); // 게시글 생�
 router.get("/", jobPostController.getAllJobPosts); // 모든 게시글 조회
 router.get("/:id", jobPostController.getJobPostById); // 특정 게시글 조회
 router.get("/appliedJobs/:userId", jobPostController.getAppliedJobsByUserId); // 특정 사용자가 지원한 ��시�� 조회
+router.get("/appliedUsers/:id", jobPostController.getAppliedUsersByJobId);
 router.get("/company/:companyId", jobPostController.getJobPostsByCompany); // 특정 게시글 조회
 router.get("/skillSet/:skillSet", jobPostController.getJobPostsBySkillSet); // 특정 게시글 조회
 router.put("/:id", jobPostController.updateJobPost); // 게시글 수정

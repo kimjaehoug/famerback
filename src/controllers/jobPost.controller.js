@@ -53,6 +53,31 @@ exports.getAppliedJobsByUserId = async (req, res) => {
   }
 };
 
+exports.getAppliedUsersByJobId = async (req, res) => {
+  try {
+    const jobPost = await JobPost.findById(req.params.id);
+
+    if (!jobPost) {
+      console.log(`Job post not found with ID: ${req.params.id}`);
+      return res.status(404).json({ error: "Job post not found" });
+    }
+
+    const applications = jobPost.applications;
+    const applicationArr = [];
+
+    for (const application of applications) {
+      const resume = await Resume.findById(application._id);
+      const user = await User.findById(resume.author._id);
+      applicationArr.push({ user, resume });
+    }
+
+    res.status(200).json(applicationArr);
+  } catch (error) {
+    console.error("Error fetching applied users by jobId:", error.message);
+    res.status(500).json({ error: "Failed to fetch applied users by jobId" });
+  }
+};
+
 // 특정 게시글 조회
 exports.getJobPostById = async (req, res) => {
   try {
