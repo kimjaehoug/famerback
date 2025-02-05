@@ -1,3 +1,4 @@
+const Company = require("../models/company.model");
 const JobPost = require("../models/jobPost.model");
 const Resume = require("../models/resume.model");
 const User = require("../models/user.model");
@@ -89,6 +90,8 @@ exports.getJobPostById = async (req, res) => {
       console.log(`Job post not found with ID: ${req.params.id}`);
       return res.status(404).json({ error: "Job post not found" });
     }
+    const company = await Company.findById(jobPost.author._id);
+    jobPost.author = company;
     console.log(`Fetched job post: ${jobPost.title}`);
     res.status(200).json(jobPost);
   } catch (error) {
