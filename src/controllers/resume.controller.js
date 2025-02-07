@@ -1,4 +1,6 @@
+const PdfResume = require("../models/pdfResume.model");
 const Resume = require("../models/resume.model");
+const multer = require("multer");
 
 // 이력서 생성
 exports.createResume = async (req, res) => {
@@ -34,6 +36,7 @@ exports.getResumeById = async (req, res) => {
 // 게시글 수정
 exports.updateResume = async (req, res) => {
   try {
+    console.log(req.body);
     const resume = await Resume.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
@@ -47,6 +50,38 @@ exports.updateResume = async (req, res) => {
     console.error("Error updating resume:", error.message);
     res.status(400).json({ error: "Failed to update resume" });
   }
+};
+
+exports.uploadPdfResume = async (req, res) => {
+  try {
+    const resumeId = req.params.id;
+    const fileName = req.file.filename;
+
+    const pdfResume = await PdfResume.find({ resumeId: resumeId });
+
+    if (pdfResume) {
+      await PdfResume.findByIdAndUpdate(
+        pdfResume._id,
+        { fileName },
+        { new: true }
+      );
+    } else {
+      await PdfResume.create({ resumeId, fileName });
+    }
+
+    res.status(200);
+  } catch (error) {
+    console.error("Error updating pdf resume:", error.message);
+    res.status(400).json({ error: "Failed to update pdf resume" });
+  }
+};
+
+exports.getPdfResume = async (req, res) => {
+  try {
+    const pdfResume = await PdfResume.find({ resumeId: req.params.id });
+
+    res.status(200).send(pdfResume);
+  } catch {}
 };
 
 exports.getResumesByUser = async (req, res) => {

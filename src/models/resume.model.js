@@ -78,11 +78,8 @@ const resumeSchema = mongoose.Schema({
       },
     },
   ],
-  portfolioFiles: {
-    type: [Buffer],
-  },
-  additionalFiles: {
-    type: [Buffer],
+  pdfResume: {
+    type: Buffer,
   },
   awards: [
     {
