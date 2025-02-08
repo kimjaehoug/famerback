@@ -54,7 +54,7 @@ exports.getAppliedJobsByUserId = async (req, res) => {
   }
 };
 
-exports.getAppliedUsersByJobId = async (req, res) => {
+exports.getApplicationsByJobId = async (req, res) => {
   try {
     const jobPost = await JobPost.findById(req.params.id);
 
@@ -68,8 +68,11 @@ exports.getAppliedUsersByJobId = async (req, res) => {
 
     for (const application of applications) {
       const resume = await Resume.findById(application._id);
-      const user = await User.findById(resume.author._id);
-      applicationArr.push({ user, resume });
+      if (resume) {
+        console.log(resume);
+        const user = await User.findById(resume.author._id);
+        applicationArr.push({ user, resume });
+      }
     }
 
     res.status(200).json(applicationArr);

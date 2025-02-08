@@ -63,7 +63,6 @@ app.get("/", (req, res) => {
 app.use("/company", companyRoutes); // 기업 회원 라우트 추가
 app.use("/jobPost", jobPostRoutes); // 채용 공고 라우트 추가
 app.use("/resume", resumeRoutes); // 이력서 라우트 추가
-app.use("/resume", express.static("additionalFiles"));
 app.use("/resume", express.static("pdfResumes"));
 app.use("/review", reviewRoutes); // 리뷰 라우트 추가
 app.use("/user", userRoutes); // 유저 라우트 추가

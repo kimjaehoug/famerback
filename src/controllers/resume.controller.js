@@ -58,8 +58,10 @@ exports.uploadPdfResume = async (req, res) => {
     const fileName = req.file.filename;
 
     const pdfResume = await PdfResume.find({ resumeId: resumeId });
+    console.log(pdfResume);
+    console.log(pdfResume.length);
 
-    if (pdfResume) {
+    if (pdfResume.length) {
       await PdfResume.findByIdAndUpdate(
         pdfResume._id,
         { fileName },
@@ -79,6 +81,11 @@ exports.uploadPdfResume = async (req, res) => {
 exports.getPdfResume = async (req, res) => {
   try {
     const pdfResume = await PdfResume.find({ resumeId: req.params.id });
+    console.log(pdfResume);
+    if (!pdfResume) {
+      console.log(`Pdf resume not found for resume ID: ${req.params.id}`);
+      return res.status(404).json({ error: "Pdf resume not found" });
+    }
 
     res.status(200).send(pdfResume);
   } catch {}
@@ -107,6 +114,7 @@ exports.deleteResume = async (req, res) => {
       console.log(`Resume not found with ID: ${req.params.id}`);
       return res.status(404).json({ error: "Resume not found" });
     }
+    await PdfResume.findOneAndDelete({ resumeId: req.params.id });
     console.log(`Deleted resume: ${resume.title}`);
     res.status(200).json({ message: "Resume deleted successfully" });
   } catch (error) {
