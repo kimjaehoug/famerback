@@ -13,7 +13,11 @@ const naverRoutes = require("./routes/naver.routes");
 const app = express();
 require("dotenv").config();
 
-const allowedOrigins = ["http://localhost:3000", "https://ojakgyo.vercel.app"]; // 허용할 출처
+const allowedOrigins = [
+  "*",
+  "http://localhost:3000",
+  "https://ojakgyo.vercel.app",
+]; // 허용할 출처
 
 // CORS 설정
 const corsOptions = {
