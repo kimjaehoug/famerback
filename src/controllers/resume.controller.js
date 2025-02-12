@@ -1,6 +1,10 @@
 const PdfResume = require("../models/pdfResume.model");
-const Resume = require("../models/resume.model");
-const multer = require("multer");
+const Resume = require("../models/resume.model"); // Load the AWS SDK for Node.js
+var AWS = require("aws-sdk");
+// Set the region
+AWS.config.update({ region: "REGION" });
+// Create S3 service object
+var s3 = new AWS.S3({ apiVersion: "2006-03-01" });
 
 // 이력서 생성
 exports.createResume = async (req, res) => {
