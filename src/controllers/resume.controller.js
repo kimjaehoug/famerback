@@ -71,8 +71,10 @@ exports.uploadPdfResume = async (req, res) => {
         { fileName },
         { new: true }
       );
+      // AWS S3 Bucket 있는 PDF 바꾸기
     } else {
       await PdfResume.create({ resumeId, fileName });
+      // AWS S3 Bucket에 PDF 업로드하기 (이름 )
     }
 
     res.status(200);
