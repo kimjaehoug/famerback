@@ -1,9 +1,8 @@
-name: Deploy Node Application
-
+name: Deploy root-impact-back
 on:
   push:
     branches:
-      - mern-ec2-docker
+      - main
 
 jobs:
   build:
@@ -14,17 +13,17 @@ jobs:
       - name: Login to docker hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
       - name: Build Docker Image
-        run: docker build -t sijomt/my-app  .
+        run: docker build -t wjss5115/ojakgyo-api  .
       - name: Publish Image to docker hub
-        run: docker push sijomt/my-app:latest
+        run: docker push wjss5115/ojakgyo-api:latest
 
   deploy:
     needs: build
     runs-on: self-hosted
     steps:
       - name: Pull image from docker hub
-        run: docker pull sijomt/my-app:latest
+        run: docker pull wjss5115/ojakgyo-api:latest
       - name: Delete old container
-        run: docker rm -f nodejs-app-container
+        run: docker rm -f ojakgyo-api-container
       - name: Run Docker Container
-        run: docker run -d -p 4000:4000 --name nodejs-app-container -e MONGO_PASSWORD='${{ secrets.MONGO_PASSWORD }}' sijomt/my-app
+        run: docker run -d -p 4000:4000 --name ojakgyo-api-container(New Container Name) -e MONGO_PASSWORD='${{ secrets.MONGO_PASSWORD }}' wjss5115/ojakgyo-api
