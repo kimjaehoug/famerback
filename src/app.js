@@ -10,6 +10,7 @@ const resumeRoutes = require("./routes/resume.routes"); // 이력서 라우트
 const reviewRoutes = require("./routes/review.routes"); // 리뷰 라우트
 const userRoutes = require("./routes/user.routes"); // 유저 라우트
 const naverRoutes = require("./routes/naver.routes");
+const consultingRoutes = require("./routes/consulting.routes");
 const app = express();
 require("dotenv").config();
 
@@ -72,6 +73,7 @@ app.use("/resume", express.static("pdfResumes"));
 app.use("/review", reviewRoutes); // 리뷰 라우트 추가
 app.use("/user", userRoutes); // 유저 라우트 추가
 app.use("/naver", naverRoutes);
+app.use("/consulting", consultingRoutes);
 
 // 404 에러 처리
 app.use((req, res, next) => {
