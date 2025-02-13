@@ -21,7 +21,7 @@ exports.consult = async (req, res) => {
         특구종류: "규제자유특구",
         기업명: companyName,
         산업군: industry,
-        "사업 설명": "블록체인을 이용하는 기업이다.",
+        "사업 설명": explanation,
         "투자 규모 (억원)": investmentScale,
         인프라: infras,
         법인세: corpTax,
