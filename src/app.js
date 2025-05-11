@@ -14,12 +14,13 @@ const consultingRoutes = require("./routes/consulting.routes");
 const farmRoutes = require("./routes/newFarm.routes");
 const chatRoutes = require("./routes/aiChat.routes");
 const farmJournalRoutes = require("./routes/farmsche.routes");
+const edaRoutes = require("./routes/eda.routes");
 const app = express();
 
-const allowedOrigins = ["*", "http://localhost:3000"];
+const allowedOrigins = ["http://localhost:3000"];
 const corsOptions = {
   origin: (origin, callback) => {
-    if (allowedOrigins.includes(origin)) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
@@ -62,6 +63,7 @@ app.use("/consulting", consultingRoutes);
 app.use("/farm", farmRoutes);
 app.use("/aichat", chatRoutes);
 app.use("/farmJournal", farmJournalRoutes);
+app.use("/api", edaRoutes);
 // 404 에러 처리
 app.use((req, res, next) => {
   res.status(404).json({ error: "Not Found" });
