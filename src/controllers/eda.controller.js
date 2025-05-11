@@ -92,14 +92,12 @@ exports.getDailyChange = async (req, res) => {
   }
 };
 
-// 3. 가격 분포
 // 3. 가격 분포 - 히스토그램 bin 처리
 exports.getPriceDistribution = async (req, res) => {
   try {
     const [rows] = await db.query(`SELECT PDLT_PRCE FROM eda_result ORDER BY PRCE_REG_YMD DESC`);
-    const prices = rows.map(r => r.PDLT_PRCE).slice(0, 1000); // 최근 데이터 기준
+    const prices = rows.map(r => r.PDLT_PRCE).slice(0, 1000);
 
-    // 히스토그램 bin 계산
     const binSize = 50;
     const min = Math.min(...prices);
     const max = Math.max(...prices);
@@ -133,7 +131,7 @@ exports.getPriceDistribution = async (req, res) => {
   }
 };
 
-// 4. 이동 평균
+// 4. 이동 평균 (7일, 14일)
 exports.getMovingAverage = async (req, res) => {
   const { region, crop, farmName } = req.query;
   const { whereClause, values } = buildWhereClause(region, crop, farmName);
@@ -141,25 +139,34 @@ exports.getMovingAverage = async (req, res) => {
   try {
     const [rows] = await db.query(
       `
-      SELECT PRCE_REG_YMD, MA_7
+      SELECT PRCE_REG_YMD, MA_7, MA_14
       FROM eda_result
       ${whereClause}
+      AND MA_7 IS NOT NULL AND MA_14 IS NOT NULL
       ORDER BY PRCE_REG_YMD
       `,
       values
     );
 
     const labels = rows.map(row => row.PRCE_REG_YMD);
-    const data = rows.map(row => row.MA_7);
+    const data7 = rows.map(row => row.MA_7);
+    const data14 = rows.map(row => row.MA_14);
 
     res.json({
       labels,
       datasets: [
         {
           label: "7일 이동 평균",
-          data,
+          data: data7,
           borderColor: "#6366f1",
           backgroundColor: "#c7d2fe",
+          tension: 0.4,
+        },
+        {
+          label: "14일 이동 평균",
+          data: data14,
+          borderColor: "#f97316",
+          backgroundColor: "#fde68a",
           tension: 0.4,
         },
       ],
@@ -170,7 +177,7 @@ exports.getMovingAverage = async (req, res) => {
   }
 };
 
-// ✅ 예측 결과 (과거 + 미래) - 날짜 밀림 문제 해결
+// 5. 예측 결과 (과거 + 미래) - 날짜 밀림 문제 해결
 exports.getPrediction = async (req, res) => {
   const { region, crop, farmName } = req.query;
   const { whereClause, values } = buildWhereClause(region, crop, farmName);
@@ -178,7 +185,6 @@ exports.getPrediction = async (req, res) => {
   try {
     const [rows] = await db.query(
       `
-      -- ✅ 과거 데이터 (yyyy-mm-dd 고정)
       SELECT DATE_FORMAT(PRCE_REG_YMD, '%Y-%m-%d') AS date, PDLT_PRCE AS price
       FROM eda_result
       ${whereClause}
@@ -186,7 +192,6 @@ exports.getPrediction = async (req, res) => {
 
       UNION ALL
 
-      -- ✅ 예측 데이터도 날짜 문자열 형식 고정
       SELECT DATE_FORMAT(Date, '%Y-%m-%d') AS date, Predicted_Price AS price
       FROM prediction_result
       WHERE region = ? AND crop = ?
@@ -196,8 +201,8 @@ exports.getPrediction = async (req, res) => {
       [...values, region, crop]
     );
 
-    const labels = rows.map(row => row.date);         // 날짜 문자열 그대로 사용
-    const data = rows.map(row => row.price);          // 가격만 추출
+    const labels = rows.map(row => row.date);
+    const data = rows.map(row => row.price);
 
     res.json({
       labels,
